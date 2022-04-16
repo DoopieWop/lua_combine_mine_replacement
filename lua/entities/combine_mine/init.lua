@@ -439,7 +439,7 @@ function ENT:FindNearestNPC()
             local flDist = v:GetPos():DistToSqr(self:GetPos())
 
             if flDist < flNearest then
-                if self:VisibleVec(v:GetPos()) then
+                if self:VisibleVec(v:LocalToWorld(v:OBBCenter())) then
                     flNearest = flDist
                     self.hNearestNPC = v
                 end
