@@ -15,11 +15,11 @@ BOUNCEBOMB_EXPLODE_RADIUS = 125
 BOUNCEBOMB_EXPLODE_DAMAGE = 150
 
 MINE_STATE_DORMANT = 0
-MINE_STATE_DEPLOY = 1	// Try to lock down and arm
-MINE_STATE_CAPTIVE = 3	// Held in the physgun
-MINE_STATE_ARMED = 4	// Locked down and looking for targets
-MINE_STATE_TRIGGERED = 5// No turning back. I'm going to explode when I touch something.
-MINE_STATE_LAUNCHED = 6	// Similar. Thrown from physgun.
+MINE_STATE_DEPLOY = 1	-- Try to lock down and arm
+MINE_STATE_CAPTIVE = 3	-- Held in the physgun
+MINE_STATE_ARMED = 4	-- Locked down and looking for targets
+MINE_STATE_TRIGGERED = 5-- No turning back. I'm going to explode when I touch something.
+MINE_STATE_LAUNCHED = 6	-- Similar. Thrown from physgun.
 
 MINE_MODIFICATION_NORMAL = 0
 MINE_MODIFICATION_CAVERN = 1
