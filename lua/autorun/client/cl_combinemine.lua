@@ -1,6 +1,6 @@
 local mat = Material("sprites/glow04_noz")
 
-hook.Add("PostDrawOpaqueRenderables", "CombineMineSprite", function()
+hook.Add("PostDrawOpaqueRenderables", "LuaCombineMineReplacementSprite", function()
     for k, v in ipairs(ents.FindByClass("combine_mine")) do
         if !v:GetNWBool("light") then continue end
 
