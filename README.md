@@ -1,5 +1,7 @@
 # [REPLACEMENT] Lua Combine Mine
 
+Code structure based on the original Combine Mine source code.
+
 Recreation of the Half-Life 2 Combine Mine in Lua.
 Same as the non-replacement version, only that it replaces the original Combine Mine entity.
 
