@@ -166,8 +166,11 @@ end
 
 function ENT:Flip(vecForce, torque)
     if self.iFlipAttempts >= BOUNCEBOMB_MAX_FLIPS then
+        self:SetThink(nil)
         return
     end
+
+    self:EmitSound( "NPC_CombineMine.FlipOver" )
 
     local physobject = self:GetPhysicsObject()
     physobject:ApplyForceCenter(vecForce)
@@ -353,7 +356,7 @@ function ENT:SettleThink()
         if self:GetPhysicsObject():IsAsleep() && !self:GetPhysicsObject():HasGameFlag(FVPHYSICS_PLAYER_HELD) then
             local tr = util.TraceLine({
                 start = self:GetPos(),
-                endpos = self:GetPos() + self:GetAngles():Up() * -8,
+                endpos = self:GetPos() + self:GetAngles():Up() * -16,
                 mask = MASK_SHOT,
                 filter = self,
                 collisiongroup = COLLISION_GROUP_NONE
@@ -362,7 +365,6 @@ function ENT:SettleThink()
             if !tr.HitWorld then
                 local vecForce = Vector(0, 0, 2500)
                 self:Flip(vecForce, Vector(60, 0, 0))
-                self:EmitSound("NPC_CombineMine.Hop")
                 return
             end
 
