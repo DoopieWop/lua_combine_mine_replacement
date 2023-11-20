@@ -49,7 +49,7 @@ function ENT:Initialize()
 
     self.iFlipAttempts = 0
 
-    self.flTimeGrabbed = 9999999999999999999
+    self.flTimeGrabbed = math.huge
 
     if self.bDisarmed then
         self:SetStatus(MINE_STATE_DORMANT)
@@ -427,26 +427,38 @@ function ENT:FindNearestNPC()
 
     self.hNearestNPC = nil
 
-    for k, v in ipairs(ents.GetAll()) do
-        if v:IsNPC() or v:IsPlayer() then
+	for k, v in ipairs(ents.GetNPCs()) do
+		if v:EyePos().z < self:GetPos().z then continue end
 
-            if v:Health() <= 0 then continue end
+		if v:Health() <= 0 then continue end
 
-            if v:EyePos().z < self:GetPos().z then continue end
+		if v.Classify and v:Classify() == CLASS_NONE then continue end
 
-            if v.Classify and v:Classify() == CLASS_NONE then continue end
+		if v.Classify and v:Classify() == CLASS_BULLSEYE then continue end
 
-            if v.Classify and v:Classify() == CLASS_BULLSEYE then continue end
+		local flDist = v:GetPos():DistToSqr(self:GetPos())
 
-            local flDist = v:GetPos():DistToSqr(self:GetPos())
+		if flDist < flNearest then
+			if self:VisibleVec(v:LocalToWorld(v:OBBCenter())) then
+				flNearest = flDist
+				self.hNearestNPC = v
+			end
+		end
+	end
 
-            if flDist < flNearest then
-                if self:VisibleVec(v:LocalToWorld(v:OBBCenter())) then
-                    flNearest = flDist
-                    self.hNearestNPC = v
-                end
-            end
-        end
+    for k, v in ipairs(player.GetAll()) do	
+		if v:EyePos().z < self:GetPos().z then continue end
+
+		if v:Health() <= 0 then continue end
+
+		local flDist = v:GetPos():DistToSqr(self:GetPos())
+
+		if flDist < flNearest then
+			if self:VisibleVec(v:LocalToWorld(v:OBBCenter())) then
+				flNearest = flDist
+				self.hNearestNPC = v
+			end
+		end
     end
 
     if self.hNearestNPC then
@@ -461,7 +473,7 @@ function ENT:FindNearestNPC()
         end
     end
 
-    return math.sqrt(flNearest)
+    return flNearest
 end
 
 function ENT:IsFriend(pEntity)
@@ -490,11 +502,6 @@ function ENT:IsFriend(pEntity)
 end
 
 function ENT:SearchThink()
-    if table.IsEmpty(ents.FindInPVS(self)) then
-        self:SetNextThink(CurTime() + 0.5)
-        return
-    end
-
     if GetConVar("ai_disabled"):GetBool() then
         if self.bAwake then
             self:Wake(false)
@@ -515,7 +522,7 @@ function ENT:SearchThink()
 
     local flNearestNPCDist = self:FindNearestNPC()
 
-    if flNearestNPCDist <= BOUNCEBOMB_WARN_RADIUS then
+    if flNearestNPCDist <= (BOUNCEBOMB_WARN_RADIUS * BOUNCEBOMB_WARN_RADIUS) then
         if !self.bAwake then
             self:Wake(true)
         end
@@ -526,7 +533,7 @@ function ENT:SearchThink()
         return
     end
 
-    if flNearestNPCDist <= BOUNCEBOMB_DETONATE_RADIUS && !self:IsFriend(self.hNearestNPC) then
+    if flNearestNPCDist <= (BOUNCEBOMB_DETONATE_RADIUS * BOUNCEBOMB_DETONATE_RADIUS) && !self:IsFriend(self.hNearestNPC) then
         if self.bBounce then
             self:SetStatus(MINE_STATE_TRIGGERED)
         else
