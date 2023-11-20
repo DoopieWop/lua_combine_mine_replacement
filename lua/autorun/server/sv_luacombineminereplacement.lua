@@ -72,6 +72,24 @@ hook.Add("GravGunOnPickedUp", "LuaCombineMineReplacementGravityPickUp", function
     end
 end)
 
+LuaCombineMineAllNPCs = {}
+
+function ents.GetNPCs()
+	return LuaCombineMineAllNPCs
+end
+
+hook.Add("OnEntityCreated", "LuaCombineMineNPCCreated", function(ent)
+	if IsValid(ent) and ent:IsNPC() then
+		table.insert(LuaCombineMineAllNPCs, ent)
+	end
+end)
+
+hook.Add("EntityRemoved", "LuaCombineMineNPCRemoved", function(ent)
+	if IsValid(ent) and ent:IsNPC() then
+		table.RemoveByValue(LuaCombineMineAllNPCs, ent)
+	end
+end)
+
 local EMETA = FindMetaTable("Entity")
 
 function EMETA:IsValidWorld()
